@@ -10,6 +10,10 @@ const printSystem = (system, header, column) => {
     }
 }
 
+const rounded = (value) => {
+    return Number(value.toFixed(2))
+}
+
 const copyMatrix = (matrix) => {
     const newMatrix = [];
 
@@ -25,7 +29,7 @@ const copyMatrix = (matrix) => {
 
 const lastLineHaveТegativeElement = (system, lineLength, columnLength) => {
     const lastLine = system[columnLength - 1]; 
-    const prevLastLine = system[columnLength - 2]; 
+    // const prevLastLine = system[columnLength - 2]; 
     
     for (let i = 1; i < lineLength; i++) {
         if (lastLine[i] < 0) {
@@ -33,15 +37,15 @@ const lastLineHaveТegativeElement = (system, lineLength, columnLength) => {
         }
     }
 
-    for (let i = 1; i < lineLength; i++) {
-        if (lastLine[i] !== 0) {
-            continue;
-        }
+    // for (let i = 1; i < lineLength; i++) {
+    //     if (lastLine[i] !== 0) {
+    //         continue;
+    //     }
 
-        if (prevLastLine[i] < 0) {
-            return true;
-        }
-    }
+    //     if (prevLastLine[i] < 0) {
+    //         return true;
+    //     }
+    // }
 
     return false;
 }
@@ -87,7 +91,8 @@ const simplex = (system, header, column, lineLength, columnLength) => {
     let s = 1;
     let minValue = 0.1;
     for (let i = 1; i < lineLength; i++) {
-        if (lastLine[i] < minValue && !isHaveBasis(system, columnLength, i) && prevLastPlusAndPrevLastIsNegative(system, i, columnLength)) {
+        // if (lastLine[i] < minValue && !isHaveBasis(system, columnLength, i) && prevLastPlusAndPrevLastIsNegative(system, i, columnLength)) {
+            if (lastLine[i] < minValue) {
             minValue = lastLine[i];
             s = i;
         }
@@ -95,7 +100,7 @@ const simplex = (system, header, column, lineLength, columnLength) => {
 
     let k = 0;
     minValue = Number.MAX_VALUE;
-    for (let i = 1; i < columnLength - 2; i++) {
+    for (let i = 1; i < columnLength - 1; i++) {
         if (system[i][s] <= 0) {
             continue;
         }
@@ -116,7 +121,7 @@ const simplex = (system, header, column, lineLength, columnLength) => {
 
     for (let i = 0; i < columnLength; i++) {
         for (let j = 0; j < lineLength; j++) {
-            newSystem[i][j] = ((system[i][j] * memory) - (system[i][s] * system[k][j])) / memory;
+            newSystem[i][j] = rounded(((system[i][j] * memory) - (system[i][s] * system[k][j])) / memory);
         }
     }
 
@@ -124,17 +129,17 @@ const simplex = (system, header, column, lineLength, columnLength) => {
         if (i === s) {
             continue;
         }
-        newSystem[k][i] = system[k][i] / system[k][s];
+        newSystem[k][i] = rounded(system[k][i] / system[k][s]);
     }
 
     for (let i = 0; i < columnLength; i++) {
         if (i === k) {
             continue;
         }
-        newSystem[i][s] = -(system[i][s] / system[k][s]);
+        newSystem[i][s] = 0;
     }
 
-    newSystem[k][s] = 1 / memory;
+    newSystem[k][s] = 1;
 
 
     return newSystem;
@@ -146,8 +151,8 @@ const changeCoef = (k, s, header, column) => {
     const newElementColumn = elementHeader.replace("-", " ");
     const newElementHeader = elementColumn.replace(" ", "-"); 
 
-    header[s + 1] = newElementHeader;
-    column[k] = newElementColumn;
+    header[s + 1] = elementColumn;
+    column[k] = elementHeader;
 }
 
 const printLongLine = () => {
@@ -163,17 +168,14 @@ const printLongLine = () => {
 // ];
 
 let system = [
-    [ 1,   1,   1],
-    [ 1,   1,  -2],
-    [ 2,   2,   3],
-    [ 3,   3,   2],
-    [ 1,  -2,  -2],
-    [ 0,  -1,   1],
-    [-8,  -5,   2],
+    [40, 1, 3, 5, 3, 1, 0, 0],
+    [50, 2, 6, 1, 0, 0, 1, 0],
+    [30, 2, 3, 2, 5, 0, 0, 1],
+    [0, -7, -8, -6, -5, 0, 0, 0]
 ];
 
-const lineLength = 3;
-const columnLength = 7;
+const lineLength = 8;
+const columnLength = 4;
 
 // const header = ["   ", "b", "-x6", "-x2", "-x3", "-x4", "-x5"];
 // const column = [" x1", " x7", " x8", "  f", "  g"];
@@ -181,20 +183,20 @@ const columnLength = 7;
 const header = [];
 for (let i = 0; i <= lineLength; i++) {
     if (i === 0) {
-        header.push("   ");
+        header.push("  ");
     } else if (i === 1) {
-        header.push("  b");
+        header.push(" b");
     } else {
         header.push(` x${i - 1}`);
     }
 }
 
 const column = [];
-for (let i = 0; i < columnLength - 2; i++) {
-    column.push(` x${lineLength + i}`);
+for (let i = columnLength + 1; i < lineLength; i++) {
+    column.push(`x${i}`);
 }
-column.push("  f");
-column.push("  g");
+column.push(" f");
+column.push(" g");
 
 printSystem(system, header, column);
 printLongLine();
