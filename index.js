@@ -147,11 +147,11 @@ const simplex = (system, header, column, lineLength, columnLength) => {
 
 const changeCoef = (k, s, header, column) => {
     const elementHeader = header[s + 1];
-    const elementColumn = column[k];
-    const newElementColumn = elementHeader.replace("-", " ");
-    const newElementHeader = elementColumn.replace(" ", "-"); 
+    //const elementColumn = column[k];
+    // const newElementColumn = elementHeader.replace("-", " ");
+    // const newElementHeader = elementColumn.replace(" ", "-"); 
 
-    header[s + 1] = elementColumn;
+    //header[s + 1] = elementColumn;
     column[k] = elementHeader;
 }
 
@@ -185,9 +185,9 @@ for (let i = 0; i <= lineLength; i++) {
     if (i === 0) {
         header.push("  ");
     } else if (i === 1) {
-        header.push(" b");
+        header.push("b");
     } else {
-        header.push(` x${i - 1}`);
+        header.push(`x${i - 1}`);
     }
 }
 
@@ -196,7 +196,7 @@ for (let i = columnLength + 1; i < lineLength; i++) {
     column.push(`x${i}`);
 }
 column.push(" f");
-column.push(" g");
+//column.push(" g");
 
 printSystem(system, header, column);
 printLongLine();
